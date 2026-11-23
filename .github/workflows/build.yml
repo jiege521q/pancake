@@ -3,15 +3,26 @@ on: [push, workflow_dispatch]
 jobs:
   b:
     runs-on: ubuntu-latest
-    container: espressif/idf:release-v6.1
+    container: espressif/idf:release-v5.4
     steps:
     - uses: actions/checkout@v4
-    - run: |
-        python3 -m zipfile -e pancake-xiaozhi.zip . || true
-        if [ -d xz_pkg ]; then cd xz_pkg; fi
+    - name: Build
+      run: |
+        set -e
+        set -o pipefail
+        set -x
+        git config --global --add safe.directory '*'
+        python3 -m zipfile -e pancake-xiaozhi.zip .
+        cd xz_pkg
         . $IDF_PATH/export.sh
-        python scripts/build.py pancake-s3
+        python scripts/build.py pancake-s3 2>&1 | tee /tmp/build.log
     - uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: bin
         path: "**/build/*.bin"
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: log
+        path: /tmp/build.log
