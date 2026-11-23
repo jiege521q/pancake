@@ -1,0 +1,17 @@
+name: build
+on: [push, workflow_dispatch]
+jobs:
+  b:
+    runs-on: ubuntu-latest
+    container: espressif/idf:release-v6.1
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+        python3 -m zipfile -e pancake-xiaozhi.zip . || true
+        if [ -d xz_pkg ]; then cd xz_pkg; fi
+        . $IDF_PATH/export.sh
+        python scripts/build.py pancake-s3
+    - uses: actions/upload-artifact@v4
+      with:
+        name: bin
+        path: "**/build/*.bin"
