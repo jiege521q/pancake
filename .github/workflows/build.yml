@@ -3,7 +3,7 @@ on: [push, workflow_dispatch]
 jobs:
   b:
     runs-on: ubuntu-latest
-    container: espressif/idf:release-v5.4
+    container: espressif/idf:release-v6.1
     steps:
     - uses: actions/checkout@v4
     - name: Build
