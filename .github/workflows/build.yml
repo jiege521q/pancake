@@ -44,18 +44,29 @@ jobs:
       run: |
         cd xz_pkg
         . $IDF_PATH/export.sh
-        idf.py merge-bin
+        set +e
+        python -m esptool --chip esp32s3 merge_bin -o /tmp/fw.bin \
+          --flash_mode dio --flash_freq 80m --flash_size 16MB \
+          0x0 build/bootloader/bootloader.bin \
+          0x8000 build/partition_table/partition-table.bin \
+          0xd000 build/ota_data_initial.bin \
+          0x20000 build/xiaozhi.bin \
+          0x800000 build/generated_assets.bin > /tmp/merge.log 2>&1
+        echo "merge_exit=$?"
+        cat /tmp/merge.log
     - name: Report
       if: always()
       shell: bash
       run: |
         set +e
         cp /tmp/b.log build-log.txt
+        cp /tmp/merge.log merge.log
         grep -E "error:|fatal error" /tmp/b.log | head -n 200 > errors.txt
+        cp /tmp/fw.bin firmware.bin
         git config user.name "build-bot"
         git config user.email "bot@example.com"
         git checkout -B logs
-        git add -f build-log.txt errors.txt
+        git add -f build-log.txt errors.txt merge.log firmware.bin
         git commit -m "build log"
         git push -f origin logs
     - uses: actions/upload-artifact@v4
