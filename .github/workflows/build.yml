@@ -9,13 +9,12 @@ jobs:
     - name: Build
       shell: bash
       run: |
-        set -e
         set -x
         git config --global --add safe.directory '*'
         python3 -m zipfile -e pancake-xiaozhi.zip .
         cd xz_pkg
         . $IDF_PATH/export.sh
-        python scripts/build.py pancake-s3 2>&1 | tee /tmp/build.log
+        python scripts/build.py pancake-s3 2>&1 | tee /tmp/build.log || (echo "=====ERROR TAIL====="; tail -n 80 /tmp/build.log)
     - uses: actions/upload-artifact@v4
       if: always()
       with:
