@@ -1,5 +1,12 @@
 name: build
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
 jobs:
   b:
     runs-on: ubuntu-latest
@@ -9,7 +16,6 @@ jobs:
     - name: Build
       shell: bash
       run: |
-        set -x
         git config --global --add safe.directory '*'
         python3 -m zipfile -e pancake-xiaozhi.zip .
         cd xz_pkg
@@ -24,12 +30,20 @@ jobs:
           CONFIG_SR_WN_WN9_HIESP=y > board.defaults
         set +e
         idf.py -DIDF_TARGET=esp32s3 -DSDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.defaults.esp32s3;board.defaults" build > /tmp/b.log 2>&1
-        rc=$?
-        echo "=====ERROR LINES====="
-        grep -E "error:|fatal error|FAILED:" /tmp/b.log | head -n 40
-        echo "=====TAIL====="
-        tail -n 30 /tmp/b.log
-        exit $rc
+        echo "exit=$?"
+    - name: Report
+      if: always()
+      shell: bash
+      run: |
+        set +e
+        cp /tmp/b.log build-log.txt
+        grep -E "error:|fatal error" /tmp/b.log | head -n 200 > errors.txt
+        git config user.name "build-bot"
+        git config user.email "bot@example.com"
+        git checkout -B logs
+        git add -f build-log.txt errors.txt
+        git commit -m "build log"
+        git push -f origin logs
     - uses: actions/upload-artifact@v4
       if: always()
       with:
