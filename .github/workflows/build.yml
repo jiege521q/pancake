@@ -7,9 +7,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build
+      shell: bash
       run: |
         set -e
-        set -o pipefail
         set -x
         git config --global --add safe.directory '*'
         python3 -m zipfile -e pancake-xiaozhi.zip .
