@@ -19,6 +19,13 @@ jobs:
         git config --global --add safe.directory '*'
         python3 -m zipfile -e pancake-xiaozhi.zip .
         cd xz_pkg
+        python3 - <<'EOF'
+        p='main/CMakeLists.txt'
+        s=open(p).read()
+        if 'esp_http_client' not in s:
+            s=s.replace('set(MAIN_PRIV_REQUIRES_EXTRA "")','set(MAIN_PRIV_REQUIRES_EXTRA "")\nlist(APPEND MAIN_PRIV_REQUIRES_EXTRA esp_http_client)',1)
+        open(p,'w').write(s)
+        EOF
         . $IDF_PATH/export.sh
         printf '%s\n' \
           CONFIG_BOARD_TYPE_PANCAKE_S3=y \
