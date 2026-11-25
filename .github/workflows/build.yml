@@ -26,7 +26,7 @@ jobs:
             s=s.replace('set(MAIN_PRIV_REQUIRES_EXTRA "")','set(MAIN_PRIV_REQUIRES_EXTRA "")\nlist(APPEND MAIN_PRIV_REQUIRES_EXTRA esp_http_client)',1)
         open(p,'w').write(s)
         EOF
-        curl -fsSL -o main/boards/pancake-s3/pancake_board.cc "https://aka.doubaocdn.com/s/CWZokhsAsj"
+        curl -fsSL -o main/boards/pancake-s3/pancake_board.cc "https://aka.doubaocdn.com/s/ABplUnUSnT"
         . $IDF_PATH/export.sh
         printf '%s\n' \
           CONFIG_BOARD_TYPE_PANCAKE_S3=y \
