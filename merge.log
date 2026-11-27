@@ -1,0 +1,8 @@
+WARNING: Deprecated: Option '--flash_mode' is deprecated. Use '--flash-mode' instead.
+WARNING: Deprecated: Option '--flash_freq' is deprecated. Use '--flash-freq' instead.
+WARNING: Deprecated: Option '--flash_size' is deprecated. Use '--flash-size' instead.
+WARNING: Deprecated: Command 'merge_bin' is deprecated. Use 'merge-bin' instead.
+esptool v5.7.0
+HINT: Consider using --format hex to avoid flashing unused 0xFF padding between input regions.
+SHA digest in image updated.
+Wrote 0x9288a1 bytes to file '/tmp/fw.bin', ready to flash to offset 0x0.
